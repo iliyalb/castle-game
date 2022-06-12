@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2042
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CastleClient", "CastleClient\CastleClient.csproj", "{FD74A280-1AE2-4668-9395-E6105DF8D9BE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CastleClient", "CastleClient.csproj", "{0A0E74ED-6A9E-4609-9120-B0D9BE4169E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{FD74A280-1AE2-4668-9395-E6105DF8D9BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FD74A280-1AE2-4668-9395-E6105DF8D9BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FD74A280-1AE2-4668-9395-E6105DF8D9BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FD74A280-1AE2-4668-9395-E6105DF8D9BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A0E74ED-6A9E-4609-9120-B0D9BE4169E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A0E74ED-6A9E-4609-9120-B0D9BE4169E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A0E74ED-6A9E-4609-9120-B0D9BE4169E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A0E74ED-6A9E-4609-9120-B0D9BE4169E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {6B2C9141-2E9B-4E8E-8FAD-B798CDD9AF03}
+		SolutionGuid = {AE8C24D8-4E19-46E9-9D31-4AC1E0C78C48}
 	EndGlobalSection
 EndGlobal

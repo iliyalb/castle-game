@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2042
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CastleServer", "CastleServer\CastleServer.csproj", "{1390DD7F-6865-4E8B-87D4-88D1BCBCED54}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CastleServer", "CastleServer.csproj", "{A9DD927D-157B-4754-8562-16C0B0465201}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1390DD7F-6865-4E8B-87D4-88D1BCBCED54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1390DD7F-6865-4E8B-87D4-88D1BCBCED54}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1390DD7F-6865-4E8B-87D4-88D1BCBCED54}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1390DD7F-6865-4E8B-87D4-88D1BCBCED54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9DD927D-157B-4754-8562-16C0B0465201}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9DD927D-157B-4754-8562-16C0B0465201}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9DD927D-157B-4754-8562-16C0B0465201}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9DD927D-157B-4754-8562-16C0B0465201}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {B4E8080B-5E65-45FB-A79C-E98DC5B01F41}
+		SolutionGuid = {4C876689-7C58-41C1-A50A-805560EA4C2B}
 	EndGlobalSection
 EndGlobal
