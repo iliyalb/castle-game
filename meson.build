@@ -2,7 +2,7 @@ project('castle-game', 'cpp',
   default_options : ['cpp_std=c++17'])
 
 # Source directories
-src = meson.source_root() / 'src'
+src = meson.project_source_root() / 'src'
 inc = include_directories('include')
 
 # Find dependencies
