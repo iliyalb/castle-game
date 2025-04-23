@@ -160,254 +160,234 @@ castle-game/
 
 ## Class diagram
 
-```
-+-----------------------+
-|     CastleServer      |
-+-----------------------+
-- server_socket: tcp::socket
-- game_state: GameState
-- player_manager: PlayerManager
-- map: Map
-- resource_manager: ResourceManager
-- chat_handler: ChatHandler
-- timer: Timer
-- cheat_enabled: bool (default: false)
-- game_speed: float (default: 1.0)
+```mermaid
+classDiagram
+    CastleServer "1" --> "1..*" PlayerManager
+    CastleServer "1" --> "1" GameState
+    CastleServer "1" --> "1" Map
+    CastleServer "1" --> "1" ResourceManager
+    CastleServer "1" --> "1" ChatHandler
+    CastleServer "1" --> "1" Timer
 
-+ start() : void
-+ stop() : void
-+ handle_client(tcp::socket): ClientConnection
-+ get_game_state() : GameState*
-+ set_cheat_enabled(bool) : void
-+ set_game_speed(float) : void
-<> 1..* PlayerManager
-<> 1 GameState
-<> 1 Map
-<> 1 ResourceManager
-<> 1 ChatHandler
-<> 1 Timer
+    class CastleServer{
+        -tcp::socket server_socket
+        -GameState game_state
+        -PlayerManager player_manager
+        -Map map
+        -ResourceManager resource_manager
+        -ChatHandler chat_handler
+        -Timer timer
+        -bool cheat_enabled
+        -float game_speed
+        +start() void
+        +stop() void
+        +handle_client(tcp::socket) ClientConnection
+        +get_game_state() GameState*
+        +set_cheat_enabled(bool) void
+        +set_game_speed(float) void
+    }
 
-+-----------------------+
-|     GameState         |
-+-----------------------+
-- victory_state: VictoryState (enum: None, Player1Win, Player2Win, Draw)
-- player_scores: std::map<PlayerID, int>
-- elapsed_time: long long
-- is_game_over: bool (default: false)
+    class GameState{
+        -VictoryState victory_state
+        -map~PlayerID, int~ player_scores
+        -long long elapsed_time
+        -bool is_game_over
+        +get_victory_state() VictoryState
+        +set_victory_state(VictoryState) void
+        +update_player_score(PlayerID, int) void
+        +get_player_score(PlayerID) int
+        +is_game_over() bool
+        +set_game_over(bool) void
+    }
 
-+ get_victory_state() : VictoryState
-+ set_victory_state(VictoryState) : void
-+ update_player_score(PlayerID, int) : void
-+ get_player_score(PlayerID) : int
-+ is_game_over() : bool
-+ set_game_over(bool) : void
+    class PlayerManager{
+        -map~PlayerID, Player*~ players
+        -PlayerID next_player_id
+        -map~TeamNumber, vector~PlayerID~~ team_assignments
+        +create_player(Faction, Color, float) Player*
+        +remove_player(PlayerID) void
+        +get_player(PlayerID) Player*
+        +assign_to_team(PlayerID, TeamNumber) void
+        +get_players_in_team(TeamNumber) vector~PlayerID~
+    }
 
-+-----------------------+
-|    PlayerManager      |
-+-----------------------+
-- players: std::map<PlayerID, Player*>
-- next_player_id: PlayerID (auto increment)
-- team_assignments: std::map<TeamNumber, std::vector<PlayerID>>
+    class Player{
+        -PlayerID player_id
+        -Faction faction
+        -Color color
+        -float resource_handicap_percentage
+        -int gold
+        -int lumber
+        -TeamNumber team_number
+        -vector~Unit*~ units
+        -vector~Building*~ buildings
+        -Hero* hero
+        -UpgradeManager upgrades
+        +get_player_id() PlayerID
+        +get_faction() Faction
+        +get_color() Color
+        +get_resource_handicap_percentage() float
+        +add_gold(int) void
+        +subtract_gold(int) void
+        +add_lumber(int) void
+        +subtract_lumber(int) void
+        +assign_to_team(TeamNumber) void
+        +get_team_number() TeamNumber
+        +get_units() vector~Unit*~
+        +get_buildings() vector~Building*~
+        +set_hero(Hero*) void
+        +get_hero() Hero*
+    }
 
-+ create_player(Faction, Color, ResourceHandicapPercentage) : Player*
-+ remove_player(PlayerID) : void
-+ get_player(PlayerID) : Player*
-+ assign_to_team(PlayerID, TeamNumber) : void
-+ get_players_in_team(TeamNumber) : std::vector<PlayerID>
+    Map "1" --> "*" Tile
+    class Map{
+        -vector~vector~Tile~~ map_data
+        -FogOfWar fog_of_war
+        -int tile_size
+        +get_tile(int x, int y) Tile*
+        +set_fog_of_war(FogOfWar) void
+        +get_fog_of_war() FogOfWar
+        +load_map(string) void
+    }
 
-+-----------------------+
-|        Player         |
-+-----------------------+
-- player_id: PlayerID
-- faction: Faction (enum)
-- color: Color (struct/enum)
-- resource_handicap_percentage: float
-- gold: int
-- lumber: int
-- team_number: TeamNumber (optional, default: None)
-- units: std::vector<Unit*>
-- buildings: std::vector<Building*>
-- hero: Hero*
-- upgrades: UpgradeManager
+    class ResourceManager{
+        -float gold_generation_rate
+        -float lumber_generation_rate
+        -int upkeep_cost
+        +calculate_resource_income(Player*) ResourceDelta
+        +apply_upkeep(Player*) void
+    }
 
-+ get_player_id() : PlayerID
-+ get_faction() : Faction
-+ get_color() : Color
-+ get_resource_handicap_percentage() : float
-+ add_gold(int) : void
-+ subtract_gold(int) : void
-+ add_lumber(int) : void
-+ subtract_lumber(int) : void
-+ assign_to_team(TeamNumber) : void
-+ get_team_number() : TeamNumber
-+ get_units() : std::vector<Unit*>
-+ get_buildings() : std::vector<Building*>
-+ set_hero(Hero*) : void
-+ get_hero() : Hero*
+    ChatHandler "1" --> "*" ChatMessage
+    class ChatHandler{
+        -vector~ChatMessage~ chat_log
+        +send_message(PlayerID, string) void
+        +receive_message(tcp::socket, string) void
+        +get_chat_log() vector~ChatMessage~
+    }
 
-+-----------------------+
-|        Map            |
-+-----------------------+
-- map_data: std::vector<std::vector<Tile>>  // 2D grid of tiles
-- fog_of_war: FogOfWar (enum) // Unexplored, Explored, AlwaysVisible
-- tile_size: int
+    class Timer{
+        -long long elapsed_time
+        -long long interval
+        +start() void
+        +stop() void
+        +tick() bool
+    }
 
-+ get_tile(int x, int y) : Tile*
-+ set_fog_of_war(FogOfWar) : void
-+ get_fog_of_war() : FogOfWar
-+ load_map(const std::string& filename) : void // Loads from file (e.g., a custom format)
+    class Faction{
+        -string name
+        -Color color_preference
+        -vector~UnitType~ starting_units
+    }
 
-+-----------------------+
-|   ResourceManager    |
-+-----------------------+
-- gold_generation_rate: float
-- lumber_generation_rate: float
-- upkeep_cost: int
+    class Color{
+        -int red
+        -int green
+        -int blue
+    }
 
-+ calculate_resource_income(Player*) : ResourceDelta // Struct with gold and lumber changes
-+ apply_upkeep(Player*) : void
+    UnitType "1" --> "*" Ability
+    class UnitType{
+        -string name
+        -int cost_gold
+        -int cost_lumber
+        -int health
+        -int attack
+        -int armor
+        -int speed
+        -vector~Ability~ abilities
+    }
 
-+-----------------------+
-|     ChatHandler      |
-+-----------------------+
-- chat_log: std::vector<ChatMessage>  // Stores messages (timestamp, player ID, message)
+    Unit "1" --> "1" Player
+    Unit "1" --> "1" UnitType
+    class Unit{
+        -UnitType unit_type
+        -Player* owner
+        -int x
+        -int y
+        -int health
+        -int max_health
+        -int attack
+        -int armor
+        -int speed
+        +move(int dx, int dy) void
+        +attack(Unit*) void
+        +take_damage(int damage) void
+        +get_owner() Player*
+    }
 
-+ send_message(PlayerID, const std::string& message) : void
-+ receive_message(tcp::socket, const std::string& message) : void
-+ get_chat_log() : std::vector<ChatMessage>
+    Building "1" --> "1" Player
+    Building "1" --> "1" BuildingType
+    class Building{
+        -BuildingType building_type
+        -Player* owner
+        -int x
+        -int y
+        -int health
+        -int max_health
+        +repair(int amount) void
+        +take_damage(int damage) void
+    }
 
-+-----------------------+
-|        Timer         |
-+-----------------------+
-- elapsed_time: long long
-- interval: long long (milliseconds)
+    class BuildingType{
+        -string name
+        -int cost_gold
+        -int cost_lumber
+        -int health
+        -float production_rate
+    }
 
-+ start() : void
-+ stop() : void
-+ tick() : bool // Returns true when the interval has passed.
+    Hero --|> Unit
+    Hero "1" --> "*" Item
+    class Hero{
+        -int xp
+        -int level
+        -int intelligence
+        -int agility
+        -int strength
+        -vector~Item*~ inventory
+        -int hp
+        -int mana
+        +gain_xp(int amount) void
+        +level_up() void
+        +use_ability(Ability, Unit*) void
+    }
 
-+-----------------------+
-|      Faction         |
-+-----------------------+
-- name: std::string
-- color_preference: Color  // Default color for this faction
-- starting_units: std::vector<UnitType> // List of units available at start
+    class Ability{
+        -string name
+        -float cooldown
+        -int mana_cost
+        -AbilityEffect effect
+    }
 
-+-----------------------+
-|       Color          |
-+-----------------------+
-- red: int (0-255)
-- green: int (0-255)
-- blue: int (0-255)
+    class Item{
+        -string name
+        -ItemType type
+        -StatBonus stats_bonus
+    }
 
-+-----------------------+
-|      UnitType        |
-+-----------------------+
-- name: std::string
-- cost_gold: int
-- cost_lumber: int
-- health: int
-- attack: int
-- armor: int
-- speed: int
-- abilities: std::vector<Ability>
+    UpgradeManager "1" --> "*" Upgrade
+    class UpgradeManager{
+        -map~UpgradeID, Upgrade*~ upgrades
+    }
 
-+-----------------------+
-|        Unit          |
-+-----------------------+
-- unit_type: UnitType
-- owner: Player*
-- x: int
-- y: int
-- health: int
-- max_health: int
-- attack: int
-- armor: int
-- speed: int
+    class Upgrade{
+        -UpgradeID upgrade_id
+        -string name
+        -int cost_gold
+        -int cost_lumber
+        -UpgradeEffect effect
+    }
 
-+ move(int dx, int dy) : void
-+ attack(Unit*) : void
-+ take_damage(int damage) : void
-+ get_owner() : Player*
-
-+-----------------------+
-|      Building        |
-+-----------------------+
-- building_type: BuildingType
-- owner: Player*
-- x: int
-- y: int
-- health: int
-- max_health: int
-
-+ repair(int amount) : void
-+ take_damage(int damage) : void
-
-+-----------------------+
-|    BuildingType      |
-+-----------------------+
-- name: std::string
-- cost_gold: int
-- cost_lumber: int
-- health: int
-- production_rate: float // Units per second it can produce.
-
-+-----------------------+
-|       Hero           |
-+-----------------------+
-- unit: Unit  // Inherits from Unit
-- xp: int
-- level: int
-- intelligence: int
-- agility: int
-- strength: int
-- inventory: std::vector<Item*>
-- hp: int
-- mana: int
-
-+ gain_xp(int amount) : void
-+ level_up() : void
-+ use_ability(Ability, Unit*) : void // Or target location.
-
-+-----------------------+
-|       Ability        |
-+-----------------------+
-- name: std::string
-- cooldown: float
-- mana_cost: int
-- effect: AbilityEffect (enum)  // Damage, Heal, Buff, Debuff, etc.
-
-+-----------------------+
-|      Item            |
-+-----------------------+
-- name: std::string
-- type: ItemType (enum) // Weapon, Armor, Potion, Scroll...
-- stats_bonus: StatBonus (struct with bonuses to strength, agility, intelligence...)
-
-+-----------------------+
-|    UpgradeManager    |
-+-----------------------+
-- upgrades: std::map<UpgradeID, Upgrade*>
-
-+-----------------------+
-|       Upgrade        |
-+-----------------------+
-- upgrade_id: UpgradeID
-- name: std::string
-- cost_gold: int
-- cost_lumber: int
-- effect: UpgradeEffect (struct with stat changes, resource generation boosts...)
-
-+-----------------------+
-|    Shop              |
-+-----------------------+
-- location_x: int
-- location_y: int
-- items: std::map<Item*, int> // Item and quantity available.
-- cooldowns: std::map<Item*, long long> // Time until item is restocked
-
-+ buy_item(Player* player, Item* item) : bool  // Returns true if successful.
-+ restock() : void
+    Shop "1" --> "*" Item
+    class Shop{
+        -int location_x
+        -int location_y
+        -map~Item*, int~ items
+        -map~Item*, long long~ cooldowns
+        +buy_item(Player*, Item*) bool
+        +restock() void
+    }
 ```
 
 ## Known problems
